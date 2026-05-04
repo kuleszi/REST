@@ -10,7 +10,7 @@ namespace L5_2025N_02.Controllers;
 [Authorize]
 [ApiController]
 [Route("auctions")]
-public class AuctionsController(AuctionService auctionService, BidService bidService, ILogger<AuctionsController> logger): ControllerBase
+public class AuctionsController(AuctionService auctionService, BidService bidService, ILogger<AuctionsController> logger) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<AuctionResponse>> Create(
@@ -37,10 +37,16 @@ public class AuctionsController(AuctionService auctionService, BidService bidSer
     public async Task<ActionResult<IReadOnlyList<AuctionResponse>>> GetAll(
         [FromQuery] string? category,
         [FromQuery] AuctionStatus? status,
-        CancellationToken ct)
+        [FromQuery] string? sortBy,           // Nowość: pole do sortowania
+        [FromQuery] bool isDescending = false, // Nowość: kierunek sortowania
+        [FromQuery] int pageNumber = 1,        // Paginacja
+        [FromQuery] int pageSize = 10,         // Paginacja
+        CancellationToken ct = default)
     {
-        logger.LogInformation("Getting all auctions");
-        var result = await auctionService.GetAllAsync(category, status, ct);
+        logger.LogInformation("Getting all auctions with pagination and sorting");
+
+        // Przekazujemy wszystkie 7 parametrów do serwisu
+        var result = await auctionService.GetAllAsync(category, status, sortBy, isDescending, pageNumber, pageSize, ct);
         return Ok(result);
     }
 
