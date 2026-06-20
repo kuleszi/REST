@@ -4,8 +4,8 @@ public class Auction
 {
     public Guid Id { get; set; }
     
-    public string ItemName { get; set; } = default!;
-    public string ItemDescription { get; set; } = default!;
+    public string Title { get; set; } = default!;
+    public string Description { get; set; } = default!;
     public string Category { get; set; } = default!;
     
     public decimal StartPrice { get; set; }

@@ -45,7 +45,7 @@ public class AuctionsController(AuctionService auctionService, BidService bidSer
     {
         logger.LogInformation("Getting all auctions with pagination and sorting");
 
-        // Przekazujemy wszystkie 7 parametrów do serwisu
+        
         var result = await auctionService.GetAllAsync(category, status, sortBy, isDescending, pageNumber, pageSize, ct);
         return Ok(result);
     }

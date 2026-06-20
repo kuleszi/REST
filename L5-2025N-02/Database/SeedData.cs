@@ -32,8 +32,8 @@ public class SeedData
                 var testAuction = new Auction
                 {
                     Id = Guid.NewGuid(),
-                    ItemName = "iPhone 12",
-                    ItemDescription = "Test auction dsecription",
+                    Title = "iPhone 12",
+                    Description = "Test auction dsecription",
                     Category = "Electronics/Phones",
                     StartPrice = 599.99m,
                     CurrentHighestBid = 599.99m,
