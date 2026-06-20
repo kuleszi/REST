@@ -1,122 +1,107 @@
 ﻿using L5_2025N_02.Controllers.Dtos.Auctions;
 using L5_2025N_02.Database;
-using L5_2025N_02.Exceptions;
 using L5_2025N_02.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace L5_2025N_02.Services;
 
-public class AuctionService(AppDbContext db)
+public class AuctionService(AppDbContext context)
 {
     public async Task<AuctionResponse> CreateAsync(CreateAuctionRequest request, CancellationToken ct)
     {
-        var ownerExists = await db.Users.AnyAsync(x => x.Id == request.OwnerId, ct);
-        if (!ownerExists)
-            throw new BadRequestException("Właściciel aukcji nie istnieje.");
-
-        if (request.EndDateUtc <= request.StartDateUtc)
-            throw new BadRequestException("Data zakończenia musi być późniejsza niż data rozpoczęcia.");
-
         var auction = new Auction
         {
             Id = Guid.NewGuid(),
-            ItemName = request.ItemName,
-            ItemDescription = request.Description,
+            Title = request.Title,
+            Description = request.Description,
             Category = request.Category,
-            StartPrice = request.StartingPrice,
-            CurrentHighestBid = request.StartingPrice,
-            StartedOn = request.StartDateUtc,
-            EndedOn = request.EndDateUtc,
-            OwnerId = request.OwnerId,
             Status = AuctionStatus.Active
         };
 
-        db.Auctions.Add(auction);
-        await db.SaveChangesAsync(ct);
+        context.Auctions.Add(auction);
+        await context.SaveChangesAsync(ct);
 
-        return Map(auction);
+        return MapToResponse(auction);
     }
 
     public async Task<AuctionResponse?> GetByIdAsync(Guid id, CancellationToken ct)
     {
-        var auction = await db.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
-        return auction is null ? null : Map(auction);
+        var auction = await context.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
+        return auction is null ? null : MapToResponse(auction);
     }
 
-    public async Task<IReadOnlyList<AuctionResponse>> GetAllAsync(string? category, AuctionStatus? status, CancellationToken ct)
+    public async Task<IReadOnlyList<AuctionResponse>> GetAllAsync(
+        string? category, 
+        AuctionStatus? status, 
+        string? sortBy, 
+        bool isDescending, 
+        int pageNumber, 
+        int pageSize, 
+        CancellationToken ct)
     {
-        var query = db.Auctions.AsQueryable();
+        var query = context.Auctions.AsQueryable();
 
+        // 1. Filtrowanie
         if (!string.IsNullOrWhiteSpace(category))
             query = query.Where(x => x.Category == category);
 
         if (status.HasValue)
-            query = query.Where(x => x.Status == status.Value);
+            query = query.Where(x => x.Status == status);
 
+        // 2. Sortowanie
+        if (!string.IsNullOrWhiteSpace(sortBy))
+        {
+            query = sortBy.ToLower() switch
+            {
+                "title" => isDescending ? query.OrderByDescending(x => x.Title) : query.OrderBy(x => x.Title),
+                "id" => isDescending ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
+                _ => query.OrderBy(x => x.Id) 
+            };
+        }
+
+        // 3. Paginacja (musi być na końcu!)
         return await query
-            .OrderByDescending(x => x.StartedOn)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .Select(x => new AuctionResponse
             {
                 Id = x.Id,
-                ItemName = x.ItemName,
-                Description = x.ItemDescription,
+                Title = x.Title,
+                Description = x.Description,
                 Category = x.Category,
-                StartingPrice = x.StartPrice,
-                CurrentHighestBid = x.CurrentHighestBid,
-                StartDateUtc = x.StartedOn,
-                EndDateUtc = x.EndedOn,
-                Status = x.Status,
-                OwnerId = x.OwnerId
+                Status = x.Status
             })
             .ToListAsync(ct);
     }
 
     public async Task<bool> UpdateAsync(Guid id, UpdateAuctionRequest request, CancellationToken ct)
     {
-        var auction = await db.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (auction is null)
-            return false;
+        var auction = await context.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
+        if (auction is null) return false;
 
-        if (request.EndDateUtc <= request.StartDateUtc)
-            throw new BadRequestException("Data zakończenia musi być późniejsza niż data rozpoczęcia.");
+        auction.Title = request.Title;
+        auction.Description = request.Description;
 
-        if (request.StartingPrice > auction.CurrentHighestBid && auction.Bids.Any())
-            throw new BadRequestException("Nie można ustawić ceny wywoławczej powyżej aktualnej najwyższej oferty.");
-
-        auction.ItemName = request.ItemName;
-        auction.ItemDescription = request.Description;
-        auction.Category = request.Category;
-        auction.StartPrice = request.StartingPrice;
-        auction.StartedOn = request.StartDateUtc;
-        auction.EndedOn = request.EndDateUtc;
-        auction.Status = request.Status;
-
-        await db.SaveChangesAsync(ct);
+        await context.SaveChangesAsync(ct);
         return true;
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
     {
-        var auction = await db.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
-        if (auction is null)
-            return false;
+        var auction = await context.Auctions.FirstOrDefaultAsync(x => x.Id == id, ct);
+        if (auction is null) return false;
 
-        db.Auctions.Remove(auction);
-        await db.SaveChangesAsync(ct);
+        context.Auctions.Remove(auction);
+        await context.SaveChangesAsync(ct);
         return true;
     }
 
-    private static AuctionResponse Map(Auction auction) => new()
+    private static AuctionResponse MapToResponse(Auction auction) => new()
     {
         Id = auction.Id,
-        ItemName = auction.ItemName,
-        Description = auction.ItemDescription,
+        Title = auction.Title,
+        Description = auction.Description,
         Category = auction.Category,
-        StartingPrice = auction.StartPrice,
-        CurrentHighestBid = auction.CurrentHighestBid,
-        StartDateUtc = auction.StartedOn,
-        EndDateUtc = auction.EndedOn,
-        Status = auction.Status,
-        OwnerId = auction.OwnerId
+        Status = auction.Status
     };
 }
