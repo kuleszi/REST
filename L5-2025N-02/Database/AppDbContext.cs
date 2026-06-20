@@ -34,8 +34,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.ItemName).IsRequired().HasMaxLength(300);
-            entity.Property(e => e.ItemDescription).IsRequired().HasMaxLength(5000);
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(300);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(5000);
             entity.Property(e => e.Category).IsRequired().HasMaxLength(100);
             
             entity.Property(e => e.StartPrice).HasColumnType("decimal(18, 2)");
