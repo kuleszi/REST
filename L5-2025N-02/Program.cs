@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using L5_2025N_02.Database;
 using L5_2025N_02.Services;
+using L5_2025N_02.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,8 +41,14 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "L5-2025N-02 API",
-        Version = "v1"
+        Title = "System aukcyjny",
+        Version = "v1",
+        Description = "",
+        Contact = new OpenApiContact
+        {
+            Name = "ok",
+            Email = "ola@mail.plc"
+        }
     });
     
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -95,5 +102,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+    await SeedData.SeedAsync(db);
 }
 app.Run();
