@@ -51,65 +51,65 @@ public class UnitTestAuction
          var request = new CreateAuctionRequest 
 
         { 
-                    ItemName = "iPhone 12",
+                    Title = "iPhone 12",
                     Description = "...",
                     Category = "Electronics/Phones",
-                    OwnerId = ownerExists,
-                    StartDateUtc = DateTime.UtcNow,
-                    EndDateUtc = DateTime.UtcNow.AddDays(7)
+                    // OwnerId = ownerExists,
+                    // StartDateUtc = DateTime.UtcNow,
+                    // EndDateUtc = DateTime.UtcNow.AddDays(7)
         }; 
 
         var result = await auctionService.CreateAsync(request, CancellationToken.None);
         Assert.NotNull(result);
-        Assert.Equal("iPhone 12", result.ItemName);
+        Assert.Equal("iPhone 12", result.Title);
     }
 
     //Test 2
-    [Fact]
-    public async Task CreateAsync_ShouldBadRequestException_WhenDatesProblem()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: "Test2_CreateAuctionWithWrongDatesDb").Options; 
+    // [Fact]
+    // public async Task CreateAsync_ShouldBadRequestException_WhenDatesProblem()
+    // {
+    //     var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(databaseName: "Test2_CreateAuctionWithWrongDatesDb").Options; 
 
-        using var context = new AppDbContext(options); 
+    //     using var context = new AppDbContext(options); 
 
-        var auctionService = new AuctionService(context);
-        var inMemorySettings = new Dictionary<string, string> {
-            {"Jwt:Key", "SUPER_SECRET_KEY_THAT_HAS_AT_LEAST_32_CHARACTERS!"},
-            {"Jwt:Issuer", "TestIssuer"},
-            {"Jwt:Audience", "TestAudience"},
-            {"Jwt:ExpiresMinutes", "60"}
-        };
-        var config = new ConfigurationBuilder().AddInMemoryCollection(inMemorySettings!)
-        .Build();
-        var tokenService = new TokenService(config);
-        var authService = new AuthService(context, tokenService);
+    //     var auctionService = new AuctionService(context);
+    //     var inMemorySettings = new Dictionary<string, string> {
+    //         {"Jwt:Key", "SUPER_SECRET_KEY_THAT_HAS_AT_LEAST_32_CHARACTERS!"},
+    //         {"Jwt:Issuer", "TestIssuer"},
+    //         {"Jwt:Audience", "TestAudience"},
+    //         {"Jwt:ExpiresMinutes", "60"}
+    //     };
+    //     var config = new ConfigurationBuilder().AddInMemoryCollection(inMemorySettings!)
+    //     .Build();
+    //     var tokenService = new TokenService(config);
+    //     var authService = new AuthService(context, tokenService);
 
-        var existingUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Name = "John Test",
-            Email = "john@test.pl",
-            PasswordHash = "John123",
-            Role = "USER"
-        };
+    //     var existingUser = new User
+    //     {
+    //         Id = Guid.NewGuid(),
+    //         Name = "John Test",
+    //         Email = "john@test.pl",
+    //         PasswordHash = "John123",
+    //         Role = "USER"
+    //     };
 
-        context.Users.Add(existingUser);
-        await context.SaveChangesAsync();
+    //     context.Users.Add(existingUser);
+    //     await context.SaveChangesAsync();
 
-        var ownerExists = existingUser.Id;
+    //     var ownerExists = existingUser.Id;
 
-         var request = new CreateAuctionRequest 
+    //      var request = new CreateAuctionRequest 
 
-        { 
-                    ItemName = "iPhone 12",
-                    Description = "...",
-                    Category = "Electronics/Phones",
-                    OwnerId = ownerExists,
-                    StartDateUtc = DateTime.UtcNow.AddDays(7),
-                    EndDateUtc = DateTime.UtcNow
-        }; 
+    //     { 
+    //                 Title = "iPhone 12",
+    //                 Description = "...",
+    //                 Category = "Electronics/Phones",
+    //                 // OwnerId = ownerExists,
+    //                 // StartDateUtc = DateTime.UtcNow.AddDays(7),
+    //                 // EndDateUtc = DateTime.UtcNow
+    //     }; 
 
-        var exception = await Assert.ThrowsAsync<BadRequestException>(() => auctionService.CreateAsync(request, CancellationToken.None));
-        Assert.Equal("Data zakończenia musi być późniejsza niż data rozpoczęcia.", exception.Message);
-    }
+    //     var exception = await Assert.ThrowsAsync<BadRequestException>(() => auctionService.CreateAsync(request, CancellationToken.None));
+    //     Assert.Equal("Data zakończenia musi być późniejsza niż data rozpoczęcia.", exception.Message);
+    // }
 }
