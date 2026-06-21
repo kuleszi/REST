@@ -41,14 +41,14 @@ public class AuctionService(AppDbContext context)
     {
         var query = context.Auctions.AsQueryable();
 
-        // 1. Filtrowanie
+        
         if (!string.IsNullOrWhiteSpace(category))
             query = query.Where(x => x.Category == category);
 
         if (status.HasValue)
             query = query.Where(x => x.Status == status);
 
-        // 2. Sortowanie
+       
         if (!string.IsNullOrWhiteSpace(sortBy))
         {
             query = sortBy.ToLower() switch
@@ -59,7 +59,6 @@ public class AuctionService(AppDbContext context)
             };
         }
 
-        // 3. Paginacja (musi być na końcu!)
         return await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
