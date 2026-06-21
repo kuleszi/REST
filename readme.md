@@ -1,284 +1,293 @@
-Dokumentacja techniczna projektu – System Aukcyjny REST
-
+Dokumentacja techniczna projektu ï¿½ System Aukcyjny REST
 
 1.  Autorzy
 
-	Aleksandra Kulesza
-	Karolina Mazur
-	Patryk Procyk
-	Katarzyna Tyc
+    Aleksandra Kulesza
+    Karolina Mazur
+    Patryk Procyk
+    Katarzyna Tyc
 
+2.  Opis projektu
+    Projekt przedstawia system aukcji internetowych oparty o architekturï¿½ REST. Aplikacja umoï¿½liwia rejestracjï¿½ uï¿½ytkownikï¿½w, logowanie, zarzï¿½dzanie aukcjami oraz skï¿½adanie ofert licytacyjnych.
+    System zostaÅ‚ zaimplementowany w technologii ASP.NET Core Web API z dodatkowÄ… warstwÄ… widokÃ³w MVC, co umoÅ¼liwia przeglÄ…danie aukcji bezpoÅ›rednio w przeglÄ…darce.
 
-2. Opis projektu
-	Projekt przedstawia system aukcji internetowych oparty o architekturê REST. Aplikacja umo¿liwia rejestracjê u¿ytkowników, logowanie, zarz¹dzanie aukcjami oraz sk³adanie ofert licytacyjnych.
-	System zosta³ zaimplementowany w technologii ASP.NET Core Web API zgodnie z zasadami architektury warstwowej.
+3.  Wykorzystane technologie
+    ASP.NET Core Web API (.NET 8)
+    Entity Framework Core
+    SQLite
+    JWT (JSON Web Token)
+    Swagger / OpenAPI
+    Docker
+    xUnit (testy jednostkowe)
+    Git
 
-3. Wykorzystane technologie
-	ASP.NET Core Web API (.NET 8)
-	Entity Framework Core
-	SQLite
-	JWT (JSON Web Token)
-	Swagger / OpenAPI
-	Docker
-	xUnit (testy jednostkowe)
-	Git
-
-4. Logika biznesowa
+4.  Logika biznesowa
 
 Tworzenie aukcji
-	Podczas tworzenia aukcji system:
-	sprawdza czy w³aœciciel istnieje,
-	sprawdza poprawnoœæ dat,
-	ustawia status aukcji jako Active,
-	ustawia aktualn¹ najwy¿sz¹ ofertê równ¹ cenie wywo³awczej.
+Podczas tworzenia aukcji system:
+sprawdza czy wï¿½aï¿½ciciel istnieje,
+sprawdza poprawnoï¿½ï¿½ dat,
+ustawia status aukcji jako Active,
+ustawia aktualnï¿½ najwyï¿½szï¿½ ofertï¿½ rï¿½wnï¿½ cenie wywoï¿½awczej.
 
-Sk³adanie ofert
-	Podczas sk³adania oferty system:
-	sprawdza czy aukcja istnieje,
-	sprawdza czy u¿ytkownik istnieje,
-	sprawdza czy aukcja jest aktywna,
-	sprawdza czy nie up³yn¹³ termin zakoñczenia aukcji,
-	sprawdza czy nowa oferta jest wy¿sza od aktualnej najwy¿szej oferty,
-	zapisuje ofertê,
-	aktualizuje pole CurrentHighestBid.
+Skï¿½adanie ofert
+Podczas skï¿½adania oferty system:
+sprawdza czy aukcja istnieje,
+sprawdza czy uï¿½ytkownik istnieje,
+sprawdza czy aukcja jest aktywna,
+sprawdza czy nie upï¿½ynï¿½ï¿½ termin zakoï¿½czenia aukcji,
+sprawdza czy nowa oferta jest wyï¿½sza od aktualnej najwyï¿½szej oferty,
+zapisuje ofertï¿½,
+aktualizuje pole CurrentHighestBid.
 
 Aktualizacja aukcji
-	System nie pozwala:
-	ustawiæ daty zakoñczenia wczeœniejszej ni¿ data rozpoczêcia,
-	ustawiæ ceny wywo³awczej wy¿szej od aktualnej najwy¿szej oferty, jeœli istniej¹ ju¿ oferty.
-
+System nie pozwala:
+ustawiï¿½ daty zakoï¿½czenia wczeï¿½niejszej niï¿½ data rozpoczï¿½cia,
+ustawiï¿½ ceny wywoï¿½awczej wyï¿½szej od aktualnej najwyï¿½szej oferty, jeï¿½li istniejï¿½ juï¿½ oferty.
 
 5. Architektura systemu
-	Projekt zosta³ zrealizowany z wykorzystaniem architektury warstwowej:
-	Controller -> Service -> Database -> SQLite
-
+   Projekt zostaï¿½ zrealizowany z wykorzystaniem architektury warstwowej:
+   Controller -> Service -> Database -> SQLite oraz View (MVC).
 
 Warstwa Controller
-	Odpowiada za obs³ugê ¿¹dañ HTTP oraz zwracanie odpowiedzi klientowi.
+Odpowiada za obsï¿½ugï¿½ ï¿½ï¿½daï¿½ HTTP oraz zwracanie odpowiedzi klientowi.
 
 Warstwa Service
-	Zawiera logikê biznesow¹ aplikacji, np. logowanie u¿ytkowników, generowanie tokenów JWT, zarz¹dzanie aukcjami i ofertami.
+Zawiera logikï¿½ biznesowï¿½ aplikacji, np. logowanie uï¿½ytkownikï¿½w, generowanie tokenï¿½w JWT, zarzï¿½dzanie aukcjami i ofertami.
 
 Warstwa Database
-	Odpowiada za dostêp do danych i komunikacjê z baz¹ danych przy u¿yciu Entity Framework Core oraz klasy AppDbContext. 
-6. Model danych
-
+Odpowiada za dostï¿½p do danych i komunikacjï¿½ z bazï¿½ danych przy uï¿½yciu Entity Framework Core oraz klasy AppDbContext. 6. Model danych
 
 7. Relacje:
-System wykorzystuje nastêpuj¹ce relacje:
-	Jeden u¿ytkownik mo¿e utworzyæ wiele aukcji.
-	Jeden u¿ytkownik mo¿e z³o¿yæ wiele ofert.
-	Jedna aukcja mo¿e posiadaæ wiele ofert.
-	Jedna oferta nale¿y do jednego u¿ytkownika			.
-	Jedna oferta nale¿y do jednej aukcji.
+   System wykorzystuje nastï¿½pujï¿½ce relacje:
+   Jeden uï¿½ytkownik moï¿½e utworzyï¿½ wiele aukcji.
+   Jeden uï¿½ytkownik moï¿½e zï¿½oï¿½yï¿½ wiele ofert.
+   Jedna aukcja moï¿½e posiadaï¿½ wiele ofert.
+   Jedna oferta naleï¿½y do jednego uï¿½ytkownika .
+   Jedna oferta naleï¿½y do jednej aukcji.
 
 8. Endpointy REST API
-	Autoryzacja
-	Rejestracja u¿ytkownika
-	POST /auth/register
-	Tworzy nowe konto u¿ytkownika.
-	Przyk³adowe ¿¹danie:
-	{
-	  "name": "Jan Kowalski",
-	  "email": "jan@test.pl",
-	  "password": "Haslo123!"
-	}
-	OdpowiedŸ:
-	{
-	  "token": "jwt_token"
-	}
-	Kody odpowiedzi:
-	200 OK
-	400 Bad Request
+   Autoryzacja
+   Rejestracja uï¿½ytkownika
+   POST /auth/register
+   Tworzy nowe konto uï¿½ytkownika.
+   Przykï¿½adowe ï¿½ï¿½danie:
+   {
+   "name": "Jan Kowalski",
+   "email": "jan@test.pl",
+   "password": "Haslo123!"
+   }
+   Odpowiedï¿½:
+   {
+   "token": "jwt_token"
+   }
+   Kody odpowiedzi:
+   200 OK
+   400 Bad Request
 
-	Logowanie u¿ytkownika
-	POST /auth/login
-	Loguje u¿ytkownika i zwraca token JWT.
-	Przyk³adowe ¿¹danie:
-	{
-	  "email": "jan@test.pl",
-	  "password": "Haslo123!"
-	}
-	OdpowiedŸ:
-	{
-	  "token": "jwt_token"
-	}
-	Kody odpowiedzi:
-	200 OK
-	401 Unauthorized
+   Logowanie uï¿½ytkownika
+   POST /auth/login
+   Loguje uï¿½ytkownika i zwraca token JWT.
+   Przykï¿½adowe ï¿½ï¿½danie:
+   {
+   "email": "jan@test.pl",
+   "password": "Haslo123!"
+   }
+   Odpowiedï¿½:
+   {
+   "token": "jwt_token"
+   }
+   Kody odpowiedzi:
+   200 OK
+   401 Unauthorized
 
-	U¿ytkownicy
-	Wszystkie endpointy wymagaj¹ tokenu JWT.
-	Dodanie u¿ytkownika
-	POST /users
-	Przyk³adowe ¿¹danie:
-	{
-	  "name": "Jan Kowalski",
-	  "email": "jan@test.pl"
-	}
-	Kody odpowiedzi:
-	201 Created
-	400 Bad Request
+   Uï¿½ytkownicy
+   Wszystkie endpointy wymagajï¿½ tokenu JWT.
+   Dodanie uï¿½ytkownika
+   POST /users
+   Przykï¿½adowe ï¿½ï¿½danie:
+   {
+   "name": "Jan Kowalski",
+   "email": "jan@test.pl"
+   }
+   Kody odpowiedzi:
+   201 Created
+   400 Bad Request
 
-	Pobranie listy u¿ytkowników
-	GET /users
-	Zwraca wszystkich u¿ytkowników.
-	Kody odpowiedzi:
-	200 OK
+   Pobranie listy uï¿½ytkownikï¿½w
+   GET /users
+   Zwraca wszystkich uï¿½ytkownikï¿½w.
+   Kody odpowiedzi:
+   200 OK
 
-	Pobranie u¿ytkownika
-	GET /users/{id}
-	Przyk³ad:
-	GET /users/8e1d5a6f-1234-5678-9999-123456789abc
-	Kody odpowiedzi:
-	200 OK
-	404 Not Found
+   Pobranie uï¿½ytkownika
+   GET /users/{id}
+   Przykï¿½ad:
+   GET /users/8e1d5a6f-1234-5678-9999-123456789abc
+   Kody odpowiedzi:
+   200 OK
+   404 Not Found
 
-	Aktualizacja u¿ytkownika
-	PUT /users/{id}
-	Kody odpowiedzi:
-	204 No Content
-	404 Not Found
+   Aktualizacja uï¿½ytkownika
+   PUT /users/{id}
+   Kody odpowiedzi:
+   204 No Content
+   404 Not Found
 
-	Usuniêcie u¿ytkownika
-	DELETE /users/{id}
-	Kody odpowiedzi:
-	204 No Content
-	404 Not Found
+   Usuniï¿½cie uï¿½ytkownika
+   DELETE /users/{id}
+   Kody odpowiedzi:
+   204 No Content
+   404 Not Found
 
-	Aukcje
-	Wszystkie endpointy wymagaj¹ tokenu JWT.
-	Utworzenie aukcji
-	POST /auctions
-	Przyk³adowe ¿¹danie:
-	{
-	  "itemName": "iPhone 15",
-	  "description": "Telefon w bardzo dobrym stanie",
-	  "category": "Elektronika",
-	  "startingPrice": 3000,
-	  "startDateUtc": "2025-06-01T10:00:00Z",
-	  "endDateUtc": "2025-06-08T10:00:00Z",
-	  "ownerId": "GUID"
-	}
-	Kody odpowiedzi:
-	201 Created
-	400 Bad Request
+   Aukcje
+   Wszystkie endpointy wymagajï¿½ tokenu JWT.
+   Utworzenie aukcji
+   POST /auctions
+   Przykï¿½adowe ï¿½ï¿½danie:
+   {
+   "itemName": "iPhone 15",
+   "description": "Telefon w bardzo dobrym stanie",
+   "category": "Elektronika",
+   "startingPrice": 3000,
+   "startDateUtc": "2025-06-01T10:00:00Z",
+   "endDateUtc": "2025-06-08T10:00:00Z",
+   "ownerId": "GUID"
+   }
+   Kody odpowiedzi:
+   201 Created
+   400 Bad Request
 
-	Pobranie wszystkich aukcji
-	GET /auctions
-	
-	Zwraca listê aukcji dostêpnych w systemie.
+   Pobranie wszystkich aukcji
+   GET /auctions
 
-	Endpoint obs³uguje:
-	filtrowanie wyników,
-	sortowanie wyników,
-	paginacjê wyników.
+   Zwraca listï¿½ aukcji dostï¿½pnych w systemie.
 
-	Przyk³ady:
-	GET /auctions
-	GET /auctions?category=Elektronika
-	GET /auctions?status=Active
-	Kody odpowiedzi:
-	200 OK
+   Endpoint obsï¿½uguje:
+   filtrowanie wynikï¿½w,
+   sortowanie wynikï¿½w,
+   paginacjï¿½ wynikï¿½w.
 
-	Pobranie aukcji
-	GET /auctions/{id}
-	Kody odpowiedzi:
-	200 OK
-	404 Not Found
+   Przykï¿½ady:
+   GET /auctions
+   GET /auctions?category=Elektronika
+   GET /auctions?status=Active
+   Kody odpowiedzi:
+   200 OK
 
-	Aktualizacja aukcji
-	PUT /auctions/{id}
-	Kody odpowiedzi:
-	204 No Content
-	400 Bad Request
-	404 Not Found
+   Pobranie aukcji
+   GET /auctions/{id}
+   Kody odpowiedzi:
+   200 OK
+   404 Not Found
 
-	Usuniêcie aukcji
-	DELETE /auctions/{id}
-	Kody odpowiedzi:
-	204 No Content
-	404 Not Found
+   Aktualizacja aukcji
+   PUT /auctions/{id}
+   Kody odpowiedzi:
+   204 No Content
+   400 Bad Request
+   404 Not Found
 
-	Licytacje
-	Z³o¿enie oferty
-	POST /auctions/{id}/bids
-	Przyk³adowe ¿¹danie:
-	{
-	  "userId": "GUID",
-	  "price": 3500
-	}
-	System sprawdza:
-	czy u¿ytkownik istnieje,
-	czy aukcja istnieje,
-	czy aukcja jest aktywna,
-	czy nie zosta³a zakoñczona,
-	czy oferta jest wy¿sza od aktualnej najwy¿szej oferty.
-	Kody odpowiedzi:
-	200 OK
-	400 Bad Request
-	404 Not Found
+   Usuniï¿½cie aukcji
+   DELETE /auctions/{id}
+   Kody odpowiedzi:
+   204 No Content
+   404 Not Found
 
+   Licytacje
+   Zï¿½oï¿½enie oferty
+   POST /auctions/{id}/bids
+   Przykï¿½adowe ï¿½ï¿½danie:
+   {
+   "userId": "GUID",
+   "price": 3500
+   }
+   System sprawdza:
+   czy uï¿½ytkownik istnieje,
+   czy aukcja istnieje,
+   czy aukcja jest aktywna,
+   czy nie zostaï¿½a zakoï¿½czona,
+   czy oferta jest wyï¿½sza od aktualnej najwyï¿½szej oferty.
+   Kody odpowiedzi:
+   200 OK
+   400 Bad Request
+   404 Not Found
+
+   Interfejs uÅ¼ytkownika (Widoki MVC)
+   GÅ‚Ã³wny widok (Index): Pod adresem gÅ‚Ã³wnym aplikacji (/) dostÄ™pna jest lista wszystkich aukcji, wyrenderowana po stronie serwera. Interfejs pozwala na przeglÄ…danie aukcji w czytelnej tabeli wraz z kategoriami i opisami.
+   
 
 9. Autoryzacja
-	System wykorzystuje mechanizm JWT (JSON Web Token) do uwierzytelniania u¿ytkowników.
+   System wykorzystuje mechanizm JWT (JSON Web Token) do uwierzytelniania uï¿½ytkownikï¿½w.
 
-	Po poprawnym zalogowaniu u¿ytkownik otrzymuje token JWT generowany przez serwer. 
-	Token nale¿y do³¹czaæ do ka¿dego ¿¹dania kierowanego do chronionych endpointów w nag³ówku Authorization. Dziêki temu serwer mo¿e zweryfikowaæ to¿samoœæ u¿ytkownika bez koniecznoœci ponownego przesy³ania loginu i has³a. Endpointy zarz¹dzania u¿ytkownikami oraz aukcjami s¹ zabezpieczone za pomoc¹ atrybutu Authorize. 
+   Po poprawnym zalogowaniu uï¿½ytkownik otrzymuje token JWT generowany przez serwer.
+   Token naleï¿½y doï¿½ï¿½czaï¿½ do kaï¿½dego ï¿½ï¿½dania kierowanego do chronionych endpointï¿½w w nagï¿½ï¿½wku Authorization. Dziï¿½ki temu serwer moï¿½e zweryfikowaï¿½ toï¿½samoï¿½ï¿½ uï¿½ytkownika bez koniecznoï¿½ci ponownego przesyï¿½ania loginu i hasï¿½a. Endpointy zarzï¿½dzania uï¿½ytkownikami oraz aukcjami sï¿½ zabezpieczone za pomocï¿½ atrybutu Authorize.
 
 10. Walidacja danych
-	Projekt wykorzystuje mechanizm Data Annotations do walidacji danych wejœciowych.
-	Przyk³adowe ograniczenia:
+    Projekt wykorzystuje mechanizm Data Annotations do walidacji danych wejï¿½ciowych.
+    Przykï¿½adowe ograniczenia:
 
-	U¿ytkownik
-	Name – wymagane, maksymalnie 100 znaków
-	Email – wymagane, poprawny format adresu e-mail, maksymalnie 200 znaków
+    Uï¿½ytkownik
+    Name ï¿½ wymagane, maksymalnie 100 znakï¿½w
+    Email ï¿½ wymagane, poprawny format adresu e-mail, maksymalnie 200 znakï¿½w
 
-	Aukcja
-	ItemName – wymagane, maksymalnie 200 znaków
-	Description – wymagane, maksymalnie 5000 znaków
-	Category – wymagane, maksymalnie 100 znaków
-	StartingPrice – wartoœæ od 0.01 do 999999999
-	StartDateUtc – wymagane
-	EndDateUtc – wymagane
+    Aukcja
+    ItemName ï¿½ wymagane, maksymalnie 200 znakï¿½w
+    Description ï¿½ wymagane, maksymalnie 5000 znakï¿½w
+    Category ï¿½ wymagane, maksymalnie 100 znakï¿½w
+    StartingPrice ï¿½ wartoï¿½ï¿½ od 0.01 do 999999999
+    StartDateUtc ï¿½ wymagane
+    EndDateUtc ï¿½ wymagane
 
-	Oferta
-	UserId – wymagane
-	Price – wartoœæ od 0.01 do 999999999
+    Oferta
+    UserId ï¿½ wymagane
+    Price ï¿½ wartoï¿½ï¿½ od 0.01 do 999999999
 
-
-11. Obs³uga b³êdów
-	System zwraca standardowe kody HTTP:
-	200 OK
-	201 Created
-	204 No Content
-	400 Bad Request
-	401 Unauthorized
-	404 Not Found	
-	500 Internal Server Error
+11. Obsï¿½uga bï¿½ï¿½dï¿½w
+    System zwraca standardowe kody HTTP:
+    200 OK
+    201 Created
+    204 No Content
+    400 Bad Request
+    401 Unauthorized
+    404 Not Found
+    500 Internal Server Error
 
 12. Testy jednostkowe
-	W projekcie zaimplementowano testy jednostkowe przy u¿yciu frameworka xUnit.
+    W projekcie zaimplementowano testy jednostkowe przy uï¿½yciu frameworka xUnit.
 
-	UnitTestAuth
-	Testowane scenariusze:
-	poprawna rejestracja u¿ytkownika,
-	rejestracja u¿ytkownika z istniej¹cym adresem e-mail,
-	poprawne logowanie u¿ytkownika.
+    UnitTestAuth
+    Testowane scenariusze:
+    poprawna rejestracja uï¿½ytkownika,
+    rejestracja uï¿½ytkownika z istniejï¿½cym adresem e-mail,
+    poprawne logowanie uï¿½ytkownika.
 
-	UnitTestUser
-	Testowane scenariusze:
-	pobieranie u¿ytkownika po identyfikatorze.
+    UnitTestUser
+    Testowane scenariusze:
+    pobieranie uï¿½ytkownika po identyfikatorze.
 
-	UnitTestAuction
-	Testowane scenariusze:
-	poprawne tworzenie aukcji,
-	walidacja dat aukcji,
-	obs³uga niepoprawnych danych wejœciowych.
-
+    UnitTestAuction
+    Testowane scenariusze:
+    poprawne tworzenie aukcji,
+    walidacja dat aukcji,
+    obsï¿½uga niepoprawnych danych wejï¿½ciowych.
 
 13. Repozytorium
-	Link do repozytorium:
-	https://github.com/kuleszi/REST.git
+    Link do repozytorium:
+    https://github.com/kuleszi/REST.git
 
+14. Jak uruchomiÄ‡ aplikacjÄ™
 
+Wymagania: .NET 8.0 SDK.
+
+Konfiguracja: W pliku appsettings.json zdefiniuj klucze JWT (Key, Issuer, Audience).
+
+Uruchomienie: W terminalu w gÅ‚Ã³wnym folderze projektu wpisz: dotnet watch
+
+DostÄ™p do aplikacji:
+
+Widok aukcji: http://localhost:5229/
+
+Panel API (Swagger): http://localhost:5229/swagger
+
+Baza danych: Aplikacja automatycznie przeprowadza migracjÄ™ (app.db) i wypeÅ‚nia jÄ… danymi testowymi przy pierwszym uruchomieniu za pomocÄ… klasy SeedData.
