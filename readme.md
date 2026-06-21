@@ -1,293 +1,152 @@
-Dokumentacja techniczna projektu � System Aukcyjny REST
+# Dokumentacja techniczna projektu — System Aukcyjny REST
 
-1.  Autorzy
+### 1. Autorzy
 
-    Aleksandra Kulesza
-    Karolina Mazur
-    Patryk Procyk
-    Katarzyna Tyc
+* Aleksandra Kulesza
+* Karolina Mazur
+* Patryk Procyk
+* Katarzyna Tyc
 
-2.  Opis projektu
-    Projekt przedstawia system aukcji internetowych oparty o architektur� REST. Aplikacja umo�liwia rejestracj� u�ytkownik�w, logowanie, zarz�dzanie aukcjami oraz sk�adanie ofert licytacyjnych.
-    System został zaimplementowany w technologii ASP.NET Core Web API z dodatkową warstwą widoków MVC, co umożliwia przeglądanie aukcji bezpośrednio w przeglądarce.
+### 2. Opis projektu
 
-3.  Wykorzystane technologie
-    ASP.NET Core Web API (.NET 8)
-    Entity Framework Core
-    SQLite
-    JWT (JSON Web Token)
-    Swagger / OpenAPI
-    Docker
-    xUnit (testy jednostkowe)
-    Git
+Projekt przedstawia system aukcji internetowych oparty o architekturę REST. Aplikacja umożliwia rejestrację użytkowników, logowanie, zarządzanie aukcjami oraz składanie ofert licytacyjnych. System został zaimplementowany w technologii ASP.NET Core Web API z dodatkową warstwą widoków MVC, co umożliwia przeglądanie aukcji bezpośrednio w przeglądarce.
 
-4.  Logika biznesowa
+### 3. Wykorzystane technologie
 
-Tworzenie aukcji
+* ASP.NET Core Web API (.NET 8)
+* Entity Framework Core
+* SQLite
+* JWT (JSON Web Token)
+* Swagger / OpenAPI
+* Docker
+* xUnit (testy jednostkowe)
+* Git
+
+### 4. Logika biznesowa
+
+**Tworzenie aukcji**
 Podczas tworzenia aukcji system:
-sprawdza czy w�a�ciciel istnieje,
-sprawdza poprawno�� dat,
-ustawia status aukcji jako Active,
-ustawia aktualn� najwy�sz� ofert� r�wn� cenie wywo�awczej.
 
-Sk�adanie ofert
-Podczas sk�adania oferty system:
-sprawdza czy aukcja istnieje,
-sprawdza czy u�ytkownik istnieje,
-sprawdza czy aukcja jest aktywna,
-sprawdza czy nie up�yn�� termin zako�czenia aukcji,
-sprawdza czy nowa oferta jest wy�sza od aktualnej najwy�szej oferty,
-zapisuje ofert�,
-aktualizuje pole CurrentHighestBid.
+* sprawdza czy właściciel istnieje,
+* sprawdza poprawność dat,
+* ustawia status aukcji jako Active,
+* ustawia aktualną najwyższą ofertę równą cenie wywoławczej.
 
-Aktualizacja aukcji
+**Składanie ofert**
+Podczas składania oferty system:
+
+* sprawdza czy aukcja istnieje,
+* sprawdza czy użytkownik istnieje,
+* sprawdza czy aukcja jest aktywna,
+* sprawdza czy nie upłynął termin zakończenia aukcji,
+* sprawdza czy nowa oferta jest wyższa od aktualnej najwyższej oferty,
+* zapisuje ofertę,
+* aktualizuje pole CurrentHighestBid.
+
+**Aktualizacja aukcji**
 System nie pozwala:
-ustawi� daty zako�czenia wcze�niejszej ni� data rozpocz�cia,
-ustawi� ceny wywo�awczej wy�szej od aktualnej najwy�szej oferty, je�li istniej� ju� oferty.
 
-5. Architektura systemu
-   Projekt zosta� zrealizowany z wykorzystaniem architektury warstwowej:
-   Controller -> Service -> Database -> SQLite oraz View (MVC).
+* ustawić daty zakończenia wcześniejszej niż data rozpoczęcia,
+* ustawić ceny wywoławczej wyższej od aktualnej najwyższej oferty, jeśli istnieją już oferty.
 
-Warstwa Controller
-Odpowiada za obs�ug� ��da� HTTP oraz zwracanie odpowiedzi klientowi.
+### 5. Architektura systemu
 
-Warstwa Service
-Zawiera logik� biznesow� aplikacji, np. logowanie u�ytkownik�w, generowanie token�w JWT, zarz�dzanie aukcjami i ofertami.
+Projekt został zrealizowany z wykorzystaniem architektury warstwowej:
+Controller -> Service -> Database -> SQLite oraz View (MVC).
 
-Warstwa Database
-Odpowiada za dost�p do danych i komunikacj� z baz� danych przy u�yciu Entity Framework Core oraz klasy AppDbContext. 6. Model danych
+**Warstwa Controller**
+Odpowiada za obsługę żądań HTTP oraz zwracanie odpowiedzi klientowi.
 
-7. Relacje:
-   System wykorzystuje nast�puj�ce relacje:
-   Jeden u�ytkownik mo�e utworzy� wiele aukcji.
-   Jeden u�ytkownik mo�e z�o�y� wiele ofert.
-   Jedna aukcja mo�e posiada� wiele ofert.
-   Jedna oferta nale�y do jednego u�ytkownika .
-   Jedna oferta nale�y do jednej aukcji.
+**Warstwa Service**
+Zawiera logikę biznesową aplikacji, np. logowanie użytkowników, generowanie tokenów JWT, zarządzanie aukcjami i ofertami.
 
-8. Endpointy REST API
-   Autoryzacja
-   Rejestracja u�ytkownika
-   POST /auth/register
-   Tworzy nowe konto u�ytkownika.
-   Przyk�adowe ��danie:
-   {
-   "name": "Jan Kowalski",
-   "email": "jan@test.pl",
-   "password": "Haslo123!"
-   }
-   Odpowied�:
-   {
-   "token": "jwt_token"
-   }
-   Kody odpowiedzi:
-   200 OK
-   400 Bad Request
+**Warstwa Database**
+Odpowiada za dostęp do danych i komunikację z bazą danych przy użyciu Entity Framework Core oraz klasy AppDbContext.
 
-   Logowanie u�ytkownika
-   POST /auth/login
-   Loguje u�ytkownika i zwraca token JWT.
-   Przyk�adowe ��danie:
-   {
-   "email": "jan@test.pl",
-   "password": "Haslo123!"
-   }
-   Odpowied�:
-   {
-   "token": "jwt_token"
-   }
-   Kody odpowiedzi:
-   200 OK
-   401 Unauthorized
+### 6. Model danych
 
-   U�ytkownicy
-   Wszystkie endpointy wymagaj� tokenu JWT.
-   Dodanie u�ytkownika
-   POST /users
-   Przyk�adowe ��danie:
-   {
-   "name": "Jan Kowalski",
-   "email": "jan@test.pl"
-   }
-   Kody odpowiedzi:
-   201 Created
-   400 Bad Request
+(Sekcja zawiera definicje klas modelu danych)
 
-   Pobranie listy u�ytkownik�w
-   GET /users
-   Zwraca wszystkich u�ytkownik�w.
-   Kody odpowiedzi:
-   200 OK
+### 7. Relacje:
 
-   Pobranie u�ytkownika
-   GET /users/{id}
-   Przyk�ad:
-   GET /users/8e1d5a6f-1234-5678-9999-123456789abc
-   Kody odpowiedzi:
-   200 OK
-   404 Not Found
+System wykorzystuje następujące relacje:
 
-   Aktualizacja u�ytkownika
-   PUT /users/{id}
-   Kody odpowiedzi:
-   204 No Content
-   404 Not Found
+* Jeden użytkownik może utworzyć wiele aukcji.
+* Jeden użytkownik może złożyć wiele ofert.
+* Jedna aukcja może posiadać wiele ofert.
+* Jedna oferta należy do jednego użytkownika.
+* Jedna oferta należy do jednej aukcji.
 
-   Usuni�cie u�ytkownika
-   DELETE /users/{id}
-   Kody odpowiedzi:
-   204 No Content
-   404 Not Found
+### 8. Endpointy REST API oraz Interfejs użytkownika
 
-   Aukcje
-   Wszystkie endpointy wymagaj� tokenu JWT.
-   Utworzenie aukcji
-   POST /auctions
-   Przyk�adowe ��danie:
-   {
-   "itemName": "iPhone 15",
-   "description": "Telefon w bardzo dobrym stanie",
-   "category": "Elektronika",
-   "startingPrice": 3000,
-   "startDateUtc": "2025-06-01T10:00:00Z",
-   "endDateUtc": "2025-06-08T10:00:00Z",
-   "ownerId": "GUID"
-   }
-   Kody odpowiedzi:
-   201 Created
-   400 Bad Request
+**8.1. Interfejs użytkownika (Widoki MVC)**
 
-   Pobranie wszystkich aukcji
-   GET /auctions
+* **Główny widok (Index):** Pod adresem głównym aplikacji (/) dostępna jest lista wszystkich aukcji, wyrenderowana po stronie serwera. Interfejs pozwala na przeglądanie aukcji w czytelnej tabeli wraz z kategoriami i opisami.
 
-   Zwraca list� aukcji dost�pnych w systemie.
+**8.2. REST API (Endpointy)**
+*Wszystkie poniższe endpointy zwracają dane w formacie JSON i wymagają (tam gdzie zaznaczono) tokenu JWT.*
 
-   Endpoint obs�uguje:
-   filtrowanie wynik�w,
-   sortowanie wynik�w,
-   paginacj� wynik�w.
+**Autoryzacja**
 
-   Przyk�ady:
-   GET /auctions
-   GET /auctions?category=Elektronika
-   GET /auctions?status=Active
-   Kody odpowiedzi:
-   200 OK
+* `POST /auth/register` – Rejestracja nowego użytkownika.
+* `POST /auth/login` – Logowanie użytkownika, zwraca token JWT.
 
-   Pobranie aukcji
-   GET /auctions/{id}
-   Kody odpowiedzi:
-   200 OK
-   404 Not Found
+**Użytkownicy**
 
-   Aktualizacja aukcji
-   PUT /auctions/{id}
-   Kody odpowiedzi:
-   204 No Content
-   400 Bad Request
-   404 Not Found
+* `POST /users` – Dodawanie użytkownika.
+* `GET /users` – Pobranie listy użytkowników.
+* `GET /users/{id}` – Pobranie danych konkretnego użytkownika.
+* `PUT /users/{id}` – Aktualizacja danych użytkownika.
+* `DELETE /users/{id}` – Usunięcie użytkownika.
 
-   Usuni�cie aukcji
-   DELETE /auctions/{id}
-   Kody odpowiedzi:
-   204 No Content
-   404 Not Found
+**Aukcje**
 
-   Licytacje
-   Z�o�enie oferty
-   POST /auctions/{id}/bids
-   Przyk�adowe ��danie:
-   {
-   "userId": "GUID",
-   "price": 3500
-   }
-   System sprawdza:
-   czy u�ytkownik istnieje,
-   czy aukcja istnieje,
-   czy aukcja jest aktywna,
-   czy nie zosta�a zako�czona,
-   czy oferta jest wy�sza od aktualnej najwy�szej oferty.
-   Kody odpowiedzi:
-   200 OK
-   400 Bad Request
-   404 Not Found
+* `POST /auctions` – Utworzenie nowej aukcji.
+* `GET /auctions` – Pobranie listy aukcji (obsługuje filtrowanie, sortowanie i paginację).
+* `GET /auctions/{id}` – Pobranie szczegółów aukcji.
+* `PUT /auctions/{id}` – Aktualizacja aukcji.
+* `DELETE /auctions/{id}` – Usunięcie aukcji.
 
-   Interfejs użytkownika (Widoki MVC)
-   Główny widok (Index): Pod adresem głównym aplikacji (/) dostępna jest lista wszystkich aukcji, wyrenderowana po stronie serwera. Interfejs pozwala na przeglądanie aukcji w czytelnej tabeli wraz z kategoriami i opisami.
-   
+**Licytacje**
 
-9. Autoryzacja
-   System wykorzystuje mechanizm JWT (JSON Web Token) do uwierzytelniania u�ytkownik�w.
+* `POST /auctions/{id}/bids` – Złożenie oferty w danej aukcji.
 
-   Po poprawnym zalogowaniu u�ytkownik otrzymuje token JWT generowany przez serwer.
-   Token nale�y do��cza� do ka�dego ��dania kierowanego do chronionych endpoint�w w nag��wku Authorization. Dzi�ki temu serwer mo�e zweryfikowa� to�samo�� u�ytkownika bez konieczno�ci ponownego przesy�ania loginu i has�a. Endpointy zarz�dzania u�ytkownikami oraz aukcjami s� zabezpieczone za pomoc� atrybutu Authorize.
+### 9. Autoryzacja
 
-10. Walidacja danych
-    Projekt wykorzystuje mechanizm Data Annotations do walidacji danych wej�ciowych.
-    Przyk�adowe ograniczenia:
+System wykorzystuje mechanizm JWT (JSON Web Token) do uwierzytelniania użytkowników. Po poprawnym zalogowaniu użytkownik otrzymuje token JWT generowany przez serwer. Token należy dołączać do każdego żądania kierowanego do chronionych endpointów w nagłówku Authorization.
 
-    U�ytkownik
-    Name � wymagane, maksymalnie 100 znak�w
-    Email � wymagane, poprawny format adresu e-mail, maksymalnie 200 znak�w
+### 10. Walidacja danych
 
-    Aukcja
-    ItemName � wymagane, maksymalnie 200 znak�w
-    Description � wymagane, maksymalnie 5000 znak�w
-    Category � wymagane, maksymalnie 100 znak�w
-    StartingPrice � warto�� od 0.01 do 999999999
-    StartDateUtc � wymagane
-    EndDateUtc � wymagane
+Projekt wykorzystuje mechanizm Data Annotations do walidacji danych wejściowych. Przykładowe ograniczenia:
 
-    Oferta
-    UserId � wymagane
-    Price � warto�� od 0.01 do 999999999
+* **Użytkownik:** Name – wymagane, maksymalnie 100 znaków; Email – wymagane, poprawny format, maksymalnie 200 znaków.
+* **Aukcja:** ItemName – wymagane, do 200 znaków; Description – wymagane, do 5000 znaków; Category – wymagane, do 100 znaków; StartingPrice – 0.01 do 999999999.
+* **Oferta:** UserId – wymagane; Price – 0.01 do 999999999.
 
-11. Obs�uga b��d�w
-    System zwraca standardowe kody HTTP:
-    200 OK
-    201 Created
-    204 No Content
-    400 Bad Request
-    401 Unauthorized
-    404 Not Found
-    500 Internal Server Error
+### 11. Obsługa błędów
 
-12. Testy jednostkowe
-    W projekcie zaimplementowano testy jednostkowe przy u�yciu frameworka xUnit.
+System zwraca standardowe kody HTTP: 200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Internal Server Error.
 
-    UnitTestAuth
-    Testowane scenariusze:
-    poprawna rejestracja u�ytkownika,
-    rejestracja u�ytkownika z istniej�cym adresem e-mail,
-    poprawne logowanie u�ytkownika.
+### 12. Testy jednostkowe
 
-    UnitTestUser
-    Testowane scenariusze:
-    pobieranie u�ytkownika po identyfikatorze.
+W projekcie zaimplementowano testy jednostkowe przy użyciu frameworka xUnit:
 
-    UnitTestAuction
-    Testowane scenariusze:
-    poprawne tworzenie aukcji,
-    walidacja dat aukcji,
-    obs�uga niepoprawnych danych wej�ciowych.
+* **UnitTestAuth:** poprawne rejestrowanie i logowanie.
+* **UnitTestUser:** pobieranie użytkownika.
+* **UnitTestAuction:** tworzenie aukcji, walidacja dat, obsługa błędnych danych.
 
-13. Repozytorium
-    Link do repozytorium:
-    https://github.com/kuleszi/REST.git
+### 13. Repozytorium
 
-14. Jak uruchomić aplikację
+Link do repozytorium: [https://github.com/kuleszi/REST.git](https://github.com/kuleszi/REST.git)
 
-Wymagania: .NET 8.0 SDK.
+### 14. Jak uruchomić aplikację
 
-Konfiguracja: W pliku appsettings.json zdefiniuj klucze JWT (Key, Issuer, Audience).
+1. **Wymagania:** .NET 8.0 SDK.
+2. **Konfiguracja:** W pliku `appsettings.json` zdefiniuj klucze JWT (Key, Issuer, Audience).
+3. **Uruchomienie:** W terminalu w głównym folderze projektu wpisz: `dotnet watch`.
+4. **Dostęp do aplikacji:**
+* Widok aukcji: `http://localhost:5229/`
+* Panel API (Swagger): `http://localhost:5229/swagger`
 
-Uruchomienie: W terminalu w głównym folderze projektu wpisz: dotnet watch
 
-Dostęp do aplikacji:
-
-Widok aukcji: http://localhost:5229/
-
-Panel API (Swagger): http://localhost:5229/swagger
-
-Baza danych: Aplikacja automatycznie przeprowadza migrację (app.db) i wypełnia ją danymi testowymi przy pierwszym uruchomieniu za pomocą klasy SeedData.
+5. **Baza danych:** Aplikacja automatycznie przeprowadza migrację (`app.db`) i wypełnia ją danymi testowymi przy pierwszym uruchomieniu za pomocą klasy SeedData.
